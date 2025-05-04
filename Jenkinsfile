@@ -5,10 +5,9 @@ pipeline {
         stage('Checar se é uma tag') {
             steps {
                 script {
-                    def isTag = env.GIT_TAG_NAME ? true : false
-
                     echo "Nome da Tag: ${env.GIT_TAG_NAME}"
-
+                    def isTag = env.GIT_TAG_NAME ? true : false
+                    
                     if (isTag) {
                         echo "Este é um build de TAG: ${env.GIT_TAG_NAME}"
                     } else {
