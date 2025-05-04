@@ -1,38 +1,35 @@
 pipeline {
     agent any
+    environment {
+        GIT_Info = str(script: "git describe --tags --exact-match || echo 'no_tag'", returnStdout: true).trim()
+    }
 
     stages {
-        stage('Checar se é uma tag') {
+        stage("Verificar Tag") {
             steps {
                 script {
-                    echo "Nome da Tag: ${env.GIT_TAG_NAME}"
-                    def isTag = env.GIT_TAG_NAME ? true : false
-                    
-                    if (isTag) {
-                        echo "Este é um build de TAG: ${env.GIT_TAG_NAME}"
+                    if (env.GIT_Info != "no_tag") {
+                        echo "Este commit foi disparado por uma tag: ${env.GIT_Info}"
                     } else {
-                        echo "Este não é um build de tag."
+                        echo "Este commit não é uma tag. Nenhuma ação especial será executada."
                     }
                 }
             }
         }
 
-        stage('Build normal') {
+        stage("Build Release") {
             when {
-                expression { return !env.GIT_TAG_NAME }
+                expression { env.GIT_Info != "no_tag" }
             }
             steps {
-                echo "Executando build comum (sem tag)"
+                echo "Executando build de release para versão ${env.GIT_Info}"
             }
         }
+    }
 
-        stage('Build de release (com tag)') {
-            when {
-                expression { return env.GIT_TAG_NAME }
-            }
-            steps {
-                echo "Executando ação especial para TAG (ex: deploy, build de release)"
-            }
+    post {
+        always {
+            echo "Build finalizado."
         }
     }
 }
