@@ -7,15 +7,13 @@ pipeline {
                 script {
                     def isTag = env.GIT_TAG_NAME ? true : false
 
+                    echo "Nome da Tag: ${env.GIT_TAG_NAME}"
+
                     if (isTag) {
                         echo "Este é um build de TAG: ${env.GIT_TAG_NAME}"
-                        // Executar lógica de release aqui se quiser
                     } else {
                         echo "Este não é um build de tag."
                     }
-
-                    // Aqui, você pode usar `isTag` para decidir o que executar
-                    // ou separar os estágios abaixo como vou mostrar
                 }
             }
         }
